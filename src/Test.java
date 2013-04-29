@@ -1,4 +1,3 @@
-import java.util.concurrent.atomic.AtomicBoolean;
 
 public class Test {
 
@@ -89,25 +88,11 @@ public class Test {
 			thread.start();
 			threads[i] = thread;
 		}
-		final AtomicBoolean spamThreadRunning = new AtomicBoolean(true);
-		final Thread gcSpam = new Thread(new Runnable() {
 
-			@Override
-			public void run() {
-				while(spamThreadRunning.get()) {
-					System.gc();
-				}
-				
-			}
-			
-		}, "GC Spam thread");
-		gcSpam.start();
 		for (int i = 0; i < THREAD_COUNT; ++i) {
 			System.out.println("Joining thread number " + i);
 			threads[i].join();
 		}
 		pool.shutDown();
-		spamThreadRunning.set(false);
-		gcSpam.join();
 	}
 }

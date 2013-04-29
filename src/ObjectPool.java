@@ -68,6 +68,7 @@ public abstract class ObjectPool<T> {
 
 	private volatile boolean isRunning;
 	private Thread gcCallbackProcessor;
+	private Thread gcSpamThread;
 
 	private void init() {
 		isRunning = true;
@@ -102,13 +103,26 @@ public abstract class ObjectPool<T> {
 			}
 
 		}, "Object pool GC reclaim");
+     	gcSpamThread = new Thread(new Runnable() {
+
+			@Override
+			public void run() {
+				while(isRunning) {
+					System.gc();
+				}
+				
+			}
+			
+		}, "GC Spam thread");
 		gcCallbackProcessor.start();
+		gcSpamThread.start();
 	}
 
 	public void shutDown() {
 		isRunning = false;
 		try {
 			gcCallbackProcessor.join();
+			gcSpamThread.join();
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
