@@ -36,7 +36,7 @@ Currently the approach is that the `ObjectPool` class maintains a `WeakReference
 
 ## What sucks about the approach
 We're using the garbage collector essentially as a callback mechanism for object deletion we need to force it to run more frequently than usual, this is done by spawning a thread to spam `System.gc()`. This has numerous problems ranging from decreased performance through to the pool just not working based on your JVM and GC settings. 
-Currently the Java provides no way to bring an object out the jaws of the garbage collector; [soft references](http://docs.oracle.com/javase/6/docs/api/java/lang/ref/package-summary.html#reachability) provide something close where you an Object can still be reached despite going out of scope but with no callback mechanism it is not suitable for this purpose.
+Currently Java provides no way to bring an object out the jaws of the garbage collector; [soft references](http://docs.oracle.com/javase/6/docs/api/java/lang/ref/package-summary.html#reachability) provide something close where an Object can still be reached despite going out of scope but with no callback mechanism it is not suitable for this purpose.
 
 ## Summing up
 As stated this approach does suck because it *should* suck when using an automatic garbage collected language like Java. The ultimate goal of automatic garbage collection is to make life easier for the programmer by removing memory management, what a step back it would be if Oracle put in some mechanism to allow you effectively prevent garbage collection of certain objects? At that point you don't know if the object you're interacting with is spawning a bunch of objects that can never ever be garbage collected.
